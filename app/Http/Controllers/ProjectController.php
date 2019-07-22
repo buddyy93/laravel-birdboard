@@ -12,9 +12,17 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function __construct()
+    {
+        $this->middleware('auth')->only(['index', 'store']);
+    }
+
     public function index()
     {
-        return Project::all();
+        $projects = auth()->user()->projects;
+
+        return view('projects.index', compact('projects'));
     }
 
 
@@ -25,7 +33,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        //
+        return view('projects.create');
     }
 
 
@@ -37,7 +45,13 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        Project::create($request->all());
+        $attributes = request()->validate([
+            'title'       => 'required',
+            'description' => 'required']);
+
+        auth()->user()->projects()->create($attributes);
+
+        return redirect('/projects');
     }
 
     /**
@@ -48,7 +62,11 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        if (auth()->user()->isNot($project->owner)) {
+            abort(403);
+        }
+
+        return view('projects.show', compact('project'));
     }
 
     /**
@@ -59,7 +77,7 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        //
+        return view('projects.edit', compact('project'));
     }
 
     /**
