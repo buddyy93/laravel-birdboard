@@ -8,15 +8,27 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ProjectTest extends TestCase
 {
+    use WithFaker, RefreshDatabase;
+
+
     /**
      * A basic feature test example.
      *
      * @return void
      */
-    public function testExample()
+    /** @test */
+    public function a_user_can_create_a_project()
     {
-        $response = $this->get('/');
+        $this->withoutExceptionHandling();
+        $attributes = [
+            'title'       => $this->faker->sentence,
+            'description' => $this->faker->sentence,
+        ];
 
-        $response->assertStatus(200);
+        $this->post('/projects', $attributes);
+
+        $this->assertDatabaseHas('projects', $attributes);
+
+        $this->get('/projects')->assertSee($attributes['title']);
     }
 }
