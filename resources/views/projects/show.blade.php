@@ -6,14 +6,22 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{route('projects.index')}}">My Projects</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{$project->title}}</li>
+                    <li class="breadcrumb-item active"
+                        aria-current="page">{{$project->title}}</li>
                 </ol>
             </nav>
         </div>
         <div class="col text-right">
-            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target=".create-task-modal">
+            <button type="button"
+                    class="btn btn-sm btn-success mx-1"
+                    data-toggle="modal"
+                    data-target=".create-task-modal">
                 <i class="fa fa-plus-circle mr-2"></i>Create Task
             </button>
+            <a href="{{route('projects.edit',$project->id)}}"
+               class="btn btn-sm btn-primary mx-1">
+                <i class="fa fa-edit mr-2"></i>Edit Project
+            </a>
         </div>
     </div>
     <div class="row">
@@ -22,8 +30,11 @@
             @forelse($project->tasks as $task)
                 <div type="button"
                      class="card rounded shadow mb-3 border-0 border-left border-primary {{$task->completed ? 'bg-success text-white' : ''}}"
-                     data-toggle="modal" data-target=".edit-task-modal"
-                     data-body="{{$task->body}}" data-status="{{$task->completed}}" data-action="{{$task->path()}}">
+                     data-toggle="modal"
+                     data-target=".edit-task-modal"
+                     data-body="{{$task->body}}"
+                     data-status="{{$task->completed}}"
+                     data-action="{{$task->path()}}">
                     <div class="card-body py-2">
                         <div class="card-text">{{$task->body}}</div>
                     </div>
@@ -40,7 +51,17 @@
                     </p>
                 </div>
             </div>
-            <textarea class="form-control" name="notes" rows="8"></textarea>
+            {!! Form::open(['route' => ['projects.update',$project->id],'id'=>'project_note_form']) !!}
+            @method('PATCH')
+            {!! Form::textarea('notes', '', ['class' => 'form-control','rows'=>5]) !!}
+            {!! Form::close() !!}
+            <div class="mt-3 text-center">
+                <button type="submit"
+                        form="project_note_form"
+                        class="btn btn-sm btn-success">
+                    <i class="fa fa-pen mr-2"></i>Add Note
+                </button>
+            </div>
         </div>
         <div class="col-4">
             <div class="card rounded shadow">
@@ -53,13 +74,20 @@
     </div>
 @endsection
 @section('modal')
-    <div class="modal fade create-task-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+    <div class="modal fade create-task-modal"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="mySmallModalLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Create new task</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title"
+                        id="exampleModalLabel">Create new task</h5>
+                    <button type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -72,20 +100,33 @@
                     {!! Form::close() !!}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" form="create_task_form" class="btn btn-success">Create</button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-dismiss="modal">Close
+                    </button>
+                    <button type="submit"
+                            form="create_task_form"
+                            class="btn btn-success">Create
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade edit-task-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+    <div class="modal fade edit-task-modal"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="mySmallModalLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit Task</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title"
+                        id="exampleModalLabel">Edit Task</h5>
+                    <button type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -111,8 +152,14 @@
                     {!! Form::close() !!}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" form="edit_task_form" class="btn btn-success">Edit</button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-dismiss="modal">Close
+                    </button>
+                    <button type="submit"
+                            form="edit_task_form"
+                            class="btn btn-success">Edit
+                    </button>
                 </div>
             </div>
         </div>
