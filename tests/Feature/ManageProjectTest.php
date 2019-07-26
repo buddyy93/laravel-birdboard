@@ -2,26 +2,16 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ManageProjectTest extends TestCase
 {
-    use WithFaker, RefreshDatabase;
+    use WithFaker;
 
-
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    /** @test */
     public function a_user_can_create_a_project()
     {
-        $this->withoutExceptionHandling();
-
-        $this->actingAs(factory('App\User')->create());
+        $this->signIn();
 
         $attributes = factory('App\Project')->raw();
 
@@ -35,7 +25,7 @@ class ManageProjectTest extends TestCase
     /** @test */
     public function a_project_require_a_title()
     {
-        $this->actingAs(factory('App\User')->create());
+        $this->signIn();
         $attributes = factory('App\Project')->raw(['title' => '']);
         $this->post('projects', $attributes)->assertSessionHasErrors('title');
     }
@@ -43,7 +33,7 @@ class ManageProjectTest extends TestCase
     /** @test */
     public function a_project_require_a_description()
     {
-        $this->actingAs(factory('App\User')->create());
+        $this->signIn();
         $attributes = factory('App\Project')->raw(['description' => '']);
         $this->post('projects', $attributes)->assertSessionHasErrors('description');
     }
@@ -58,8 +48,6 @@ class ManageProjectTest extends TestCase
     /** @test */
     public function a_user_can_view_a_project()
     {
-        $this->withoutExceptionHandling();
-
         $user = factory('App\User')->create();
 
         $this->actingAs($user);

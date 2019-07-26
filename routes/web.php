@@ -17,6 +17,10 @@ Route::get('/', function () {
 
 Route::resource('projects', 'ProjectController');
 
+Route::post('projects/{project}/tasks', ['as' => 'project.add.task', 'uses' => 'ProjectTaskController@store']);
+Route::patch('projects/{project}/tasks/{task}', ['as' => 'project.edit.task', 'uses' => 'ProjectTaskController@update']);
+Route::resource('projects/task', 'ProjectTaskController');
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
