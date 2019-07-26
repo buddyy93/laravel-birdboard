@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Project;
+use Facades\Tests\Feature\Setup\ProjectFactory;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
@@ -9,17 +11,20 @@ class ManageProjectTest extends TestCase
 {
     use WithFaker;
 
+    /** @test */
     public function a_user_can_create_a_project()
     {
-        $this->signIn();
+        $project = ProjectFactory::ownedBy($this->signIn())->raw();
 
-        $attributes = factory('App\Project')->raw();
+        $this->post('/projects', $project)->assertRedirect('/projects/1');
 
-        $this->post('/projects', $attributes)->assertRedirect('/projects');
+        $project = Project::whereTitle($project['title'])->first();
 
-        $this->assertDatabaseHas('projects', $attributes);
+        $this->assertDatabaseHas('projects', ['title' => $project->title]);
 
-        $this->get('/projects')->assertSee($attributes['title']);
+        $this->get($project->path())
+            ->assertSee($project->title);
+
     }
 
     /** @test */

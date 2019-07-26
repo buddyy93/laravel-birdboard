@@ -35,12 +35,9 @@
             <h3 class="font-weight-bold">General Notes</h3>
             <div class="card rounded shadow">
                 <div class="card-body">
-                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti dolore
-                        facilis, hic incidunt
-                        mollitia
-                        nesciunt nisi obcaecati quasi quisquam sint tenetur, vero! Dignissimos dolore magnam, natus
-                        officiis
-                        optio quasi sunt?</p>
+                    <p class="card-text">
+                        {{$project->notes}}
+                    </p>
                 </div>
             </div>
             <textarea class="form-control" name="notes" rows="8"></textarea>
