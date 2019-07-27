@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Task;
 use Facades\Tests\Feature\Setup\ProjectFactory;
 use Tests\TestCase;
 
@@ -14,7 +15,7 @@ class ActivityFeedTest extends TestCase
 
         $this->assertCount(1, $project->activity);
 
-        $this->assertEquals('Project created', $project->activity[0]->log);
+        $this->assertEquals('project_created', $project->activity[0]->log);
     }
 
     /** @test */
@@ -26,7 +27,7 @@ class ActivityFeedTest extends TestCase
 
         $this->assertCount(2, $project->activity);
 
-        $this->assertEquals('Project updated', $project->activity->last()->log);
+        $this->assertEquals('project_updated', $project->activity->last()->log);
     }
 
     /** @test */
@@ -38,7 +39,11 @@ class ActivityFeedTest extends TestCase
 
         $this->assertCount(2, $project->activity);
 
-        $this->assertEquals('Project\'s task created', $project->activity[1]->log);
+        tap($project->activity->last(), function ($activity) {
+            $this->assertEquals('task_created', $activity->log);
+            $this->assertInstanceOf(Task::class, $activity->subject);
+            $this->assertEquals('some task', $activity->subject->body);
+        });
     }
 
     /** @test */
@@ -47,9 +52,11 @@ class ActivityFeedTest extends TestCase
         $project = ProjectFactory::withTasks(1)->create();
 
         $project->tasks[0]->complete();
+        $this->assertCount(4, $project->activity);
 
-        $this->assertCount(3, $project->activity);
-
-        $this->assertEquals('Project\'s task completed', $project->activity[2]->log);
+        tap($project->activity->last(), function ($activity) {
+            $this->assertEquals('task_completed', $activity->log);
+            $this->assertInstanceOf(Task::class, $activity->subject);
+        });
     }
 }

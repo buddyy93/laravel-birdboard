@@ -64,10 +64,26 @@
             </div>
         </div>
         <div class="col-4">
-            <div class="card rounded shadow">
+            <div class="card rounded shadow mb-3">
+                <div class="card-header py-0 border-left border-primary border-bottom-0"
+                     style="border-left-width: .3rem !important;">
+                    <h5 class="font-weight-bold py-0 mb-0">{{$project->title}}</a>
+                </div>
                 <div class="card-body">
-                    <h5 class="card-text h4 font-weight-bold">{{$project->title}}</h5>
                     <p class="card-text">{{str_limit($project->description,100)}}</p>
+                </div>
+            </div>
+            <div class="card rounded shadow">
+                <div class="card-header py-0 border-left border-primary border-bottom-0"
+                     style="border-left-width: .3rem !important;">
+                    <h5 class="font-weight-bold py-0 mb-0">Activity Log</a>
+                </div>
+                <div class="card-body">
+                    @foreach($project->activity as $activity)
+                        <p class="card-text small {{$loop->last ? '':'mb-1'}}">
+                            @include("projects.activity.{$activity->log}")
+                        </p>
+                    @endforeach
                 </div>
             </div>
         </div>

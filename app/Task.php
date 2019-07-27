@@ -6,18 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
+    use RecordActivity;
+
     protected $guarded = [];
 
     protected $touches = ['project'];
 
-    protected static function boot()
-    {
-        parent::boot();
+    public static $recordavleEvents = ['created', 'updated'];
 
-        static::created(function ($task) {
-            $task->project->recordActivity('Project\'s task created');
-        });
-    }
+//    protected static function boot()
+//    {
+//        parent::boot();
+//
+//        static::created(function ($task) {
+//            $task->project->recordActivity('Project\'s task created');
+//        });
+//    }
 
 
     public function project()
@@ -34,6 +38,14 @@ class Task extends Model
     {
         $this->update(['completed' => true]);
 
-        $this->project->recordActivity('Project\'s task completed');
+        $this->recordActivity('task_completed');
     }
+
+    public function incomplete()
+    {
+        $this->update(['completed' => false]);
+
+        $this->recordActivity('task_incompleted');
+    }
+
 }

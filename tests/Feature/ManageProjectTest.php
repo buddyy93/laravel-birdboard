@@ -63,4 +63,28 @@ class ManageProjectTest extends TestCase
             ->assertSee($project->title)
             ->assertSee($project->description);
     }
+
+    /** @test */
+    public function a_user_update_a_project()
+    {
+        $project = ProjectFactory::create();
+
+        $originalTitle = $project->title;
+
+        $project->update(['title' => 'changed']);
+
+        tap($project->activity->last(), function ($activity) use ($originalTitle) {
+            $this->assertEquals('updated', $activity->log);
+            $expected = [
+                'before' => [
+                    'title' => $originalTitle
+                ],
+                'after'  => [
+                    'title' => 'changed'
+                ]
+            ];
+
+            $this->assertEquals($expected, $activity->changes);
+        });
+    }
 }
