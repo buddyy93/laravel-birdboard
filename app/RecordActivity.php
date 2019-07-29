@@ -29,18 +29,24 @@ trait RecordActivity
     public function recordActivity($log)
     {
         $this->activity()->create([
+            'user_id'    => $this->getActivityOwner()->id,
             'log'        => $log,
             'changes'    => $this->getActivityChanges(),
             'project_id' => class_basename($this) === "Project" ? $this->id : $this->project_id
         ]);
     }
 
+    protected function getActivityOwner()
+    {
+        return ($this->project ?? $this)->owner;
+    }
+
     protected function getActivityChanges()
     {
         if ($this->wasChanged())
             return [
-                'before' => array_diff($this->oldAttributes, $this->getAttributes()),
-                'after'  => $this->getChanges()
+                'before' => array_except(array_diff($this->oldAttributes, $this->getAttributes()), 'updated_at'),
+                'after'  => array_except($this->getChanges(), 'updated_at')
             ];
     }
 
@@ -55,6 +61,6 @@ trait RecordActivity
             return static::$recordavleEvents;
         }
 
-        return ['created', 'updated', 'deleted'];
+        return ['created', 'updated'];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProjectRequest;
 use App\Project;
+use App\User;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -21,7 +22,7 @@ class ProjectController extends Controller
 
     public function index()
     {
-        $projects = auth()->user()->projects;
+        $projects = auth()->user()->associatedProjects();
 
         return view('projects.index', compact('projects'));
     }
@@ -68,8 +69,9 @@ class ProjectController extends Controller
         if (auth()->user()->isNot($project->owner)) {
             abort(403);
         }
+        $users = User::all()->except(auth()->id())->pluck('name', 'id');
 
-        return view('projects.show', compact('project'));
+        return view('projects.show', compact(['project', 'users']));
     }
 
     /**
@@ -103,6 +105,9 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        $this->authorize('delete', $project);
+        $project->delete();
+
+        return redirect('/projects');
     }
 }

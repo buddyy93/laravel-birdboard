@@ -11,18 +11,6 @@
                 </ol>
             </nav>
         </div>
-        <div class="col text-right">
-            <button type="button"
-                    class="btn btn-sm btn-success mx-1"
-                    data-toggle="modal"
-                    data-target=".create-task-modal">
-                <i class="fa fa-plus-circle mr-2"></i>Create Task
-            </button>
-            <a href="{{route('projects.edit',$project->id)}}"
-               class="btn btn-sm btn-primary mx-1">
-                <i class="fa fa-edit mr-2"></i>Edit Project
-            </a>
-        </div>
     </div>
     <div class="row">
         <div class="col-8">
@@ -71,6 +59,52 @@
                 </div>
                 <div class="card-body">
                     <p class="card-text">{{str_limit($project->description,100)}}</p>
+                    @forelse($project->members as $member)
+                        <img class="rounded-circle mx-1"
+                             data-toggle="tooltip"
+                             data-placement="bottom"
+                             width="15%"
+                             title="{{$member->name}}"
+                             src="https://www.gravatar.com/avatar/{{md5($member->email)}}"
+                             alt="{{$member->name}}">
+                    @empty
+                        <p>No members yet</p>
+                    @endforelse
+                </div>
+            </div>
+            <div class="card rounded shadow mb-3">
+                <div class="row">
+                    <div class="col-6">
+                        <button type="button"
+                                class="btn btn-sm btn-success m-1 form-control"
+                                data-toggle="modal"
+                                data-target=".create-task-modal">
+                            <i class="fa fa-plus-circle mr-2"></i>Create Task
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button"
+                                class="btn btn-sm btn-dark m-1 form-control"
+                                data-toggle="modal"
+                                data-target=".add-member-modal">
+                            <i class="fa fa-user mr-2"></i>Add Member
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <a href="{{route('projects.edit',$project->id)}}"
+                           class="btn btn-sm btn-primary m-1 form-control">
+                            <i class="fa fa-edit mr-2"></i>Edit Project
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <button type="submit"
+                                class="btn btn-sm btn-danger m-1 form-control"
+                                form="delete_project_form">
+                            <i class="fa fa-eraser mr-2"></i>Delete Project
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="card rounded shadow">
@@ -80,9 +114,7 @@
                 </div>
                 <div class="card-body">
                     @foreach($project->activity as $activity)
-                        <p class="card-text small {{$loop->last ? '':'mb-1'}}">
-                            @include("projects.activity.{$activity->log}")
-                        </p>
+                        @include("projects.activity.{$activity->log}")
                     @endforeach
                 </div>
             </div>
@@ -180,7 +212,50 @@
             </div>
         </div>
     </div>
+    <div class="modal fade add-member-modal"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="mySmallModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"
+                        id="exampleModalLabel">Project Member</h5>
+                    <button type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {!! Form::open(['route'=>['project.add.member', $project->id],'id'=>'add_member_form']) !!}
+                    @method('POST')
+                    <div class="form-group">
+                        {!! Form::label('users', 'Users', ['class' => 'control-label']) !!}
+                        {!! Form::select('member', $users , null , ['class' => 'form-control']) !!}
+                    </div>
+                    {!! Form::close() !!}
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-dismiss="modal">Close
+                    </button>
+                    <button type="submit"
+                            form="add_member_form"
+                            class="btn btn-success">Add
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {!! Form::open(['route' => ['projects.destroy',$project->id],'id'=>'delete_project_form']) !!}
+    @method('DELETE')
+    {!! Form::close() !!}
     <script>
+        $('[data-toggle="tooltip"]').tooltip()
         $('.edit-task-modal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget)
             var modal = $(this)
