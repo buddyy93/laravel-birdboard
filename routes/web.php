@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'ProjectController@index')->middleware('verified');;
 
 Route::resource('projects', 'ProjectController');
 Route::resource('projects/task', 'ProjectTaskController');
@@ -22,6 +20,6 @@ Route::post('projects/{project}/tasks', ['as' => 'project.add.task', 'uses' => '
 Route::post('projects/{project}/members', ['as' => 'project.add.member', 'uses' => 'ProjectMemberController@store']);
 Route::patch('projects/{project}/tasks/{task}', ['as' => 'project.edit.task', 'uses' => 'ProjectTaskController@update']);
 
-Auth::routes();
+Auth::routes(['verify' => true]);
 
 Route::get('/home', 'HomeController@index')->name('home');
